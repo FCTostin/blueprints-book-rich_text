@@ -1,0 +1,271 @@
+@font-face {
+  font-family: "FactorioFont";
+  src: url("https://fonts.cdnfonts.com/s/19687/PressStart2P-Regular.woff") format("woff");
+}
+
+:root {
+  --factorio-dark: #1a1a1a;    
+  --factorio-dark-alt: #242424;
+  --factorio-primary: #77b8ed;
+  --factorio-secondary: #ffcc00;
+  --factorio-accent: #0a0a0a;
+  --factorio-green: #4cc237;
+  --factorio-red: #e35959;
+  --factorio-gray: #888888;
+  --terminal-green: #4daf39;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "FactorioFont", monospace;
+  background-color: var(--factorio-dark);
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Tabs styling */
+.tabs {
+  display: flex;
+  background-color: var(--factorio-dark-alt);
+  border-bottom: 3px solid var(--factorio-primary);
+}
+.tab {
+  padding: 14px 20px;
+  color: var(--factorio-gray);
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+}
+.tab:hover {
+    background-color: var(--factorio-accent);
+    color: var(--factorio-primary);
+}
+.tab.active {
+  background-color: var(--factorio-dark);
+  color: var(--factorio-primary);
+  border-bottom: 3px solid var(--factorio-secondary);
+}
+.content { display: none; }
+.content.active { display: block; }
+
+.blueprint-panel {
+  background-color: var(--factorio-dark-alt);
+  border: 2px solid var(--factorio-accent);
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  color: var(--factorio-primary);
+  font-size: 16px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.panel-title:before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background-color: var(--factorio-primary);
+  margin-right: 8px;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  background-color: var(--factorio-accent);
+  color: var(--factorio-gray);
+  border: 1px solid #444;
+  padding: 10px;
+  font-family: monospace;
+  margin-bottom: 10px;
+  resize: vertical;
+  border-radius: 2px;
+}
+
+textarea { min-height: 120px; }
+
+textarea:focus, input:focus {
+  outline: none;
+  border-color: var(--factorio-primary);
+  box-shadow: 0 0 0 2px rgba(119, 184, 237, 0.3);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+button {
+  background-color: var(--factorio-dark-alt);
+  color: var(--factorio-primary);
+  border: 2px solid var(--factorio-primary);
+  padding: 6px 12px;
+  font-family: "FactorioFont", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background-color: var(--factorio-primary);
+  color: #000;
+}
+
+.button-primary { background-color: var(--factorio-primary); color: #000; }
+.button-danger { border-color: var(--factorio-red); color: var(--factorio-red); }
+.button-danger:hover { background-color: var(--factorio-red); color: #000; }
+
+/* History and Search */
+.history-container {
+  background-color: var(--factorio-accent);
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+}
+.history-items {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  flex-grow: 1;
+}
+.history-item {
+  background-color: var(--factorio-dark-alt);
+  color: var(--factorio-gray);
+  padding: 4px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  border: 1px solid #444;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+.history-item:hover {
+  border-color: var(--factorio-primary);
+  color: var(--factorio-primary);
+}
+.search-container {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 10px;
+  align-items: center;
+}
+.search-input { flex-grow: 1; margin-bottom: 0; }
+.replace-container {
+  display: none;
+  background-color: var(--factorio-accent);
+  border: 1px solid #444;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 2px;
+}
+.replace-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* CodeMirror Customization */
+.json-editor-container { border: 1px solid #444; border-radius: 2px; font-size: 14px; margin-bottom: 15px; }
+.CodeMirror { background: var(--factorio-accent) !important; color: #e0e0e0; font-family: monospace; height: auto; min-height: 250px; }
+.cm-s-material-darker .cm-property { color: var(--factorio-primary); }
+.cm-s-material-darker .cm-string { color: var(--terminal-green); }
+.cm-matchhighlight { background-color: rgba(255, 151, 0, 0.3) !important; }
+
+/* Book Tab specific styles */
+.charCounter {
+  font-size: 10px;
+  color: var(--factorio-gray);
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.iconPreview { width: 32px; height: 32px; display: block; background: #000; border-radius: 2px; }
+.customSelect {
+  position: relative;
+  flex-grow: 1;
+  background: var(--factorio-accent);
+  border: 1px solid #444;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.customSelect:hover { border-color: var(--factorio-primary); }
+.customSelect img { width: 24px; height: 24px; }
+.customSelect span { color: var(--factorio-gray); }
+.optionsList {
+  position: absolute;
+  z-index: 100;
+  width: 400px;
+  background: var(--factorio-dark-alt);
+  border: 1px solid #444;
+  max-height: 400px;
+  overflow-y: auto;
+  display: none;
+  font-size: 12px;
+}
+.optionItem {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.optionItem:hover { background: var(--factorio-primary); color: #000; }
+.optionItem img { width: 20px; height: 20px; }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  border-top: 2px solid var(--factorio-primary);
+  padding-top: 20px;
+  font-size: 10px;
+  color: #888888;
+}
+.footer a { color: #e0e0e0; text-decoration: none; }
+.footer a:hover { text-decoration: underline; color: var(--factorio-primary); }
+.footer-links { display: flex; flex-direction: column; gap: 5px; }
+.footer-links p { margin: 0; }
