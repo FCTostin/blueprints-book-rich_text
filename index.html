@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factorio Blueprints Decoder/Encoder</title>
+<link rel="icon" href="https://i.ibb.co/Hp44999c/blueprint-book.png" type="image/png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('decode')">Blueprint Decode/Encode</div>
+    <div class="tab" onclick="switchTab('book')">Книга чертежей</div>
+  </div>
+
+  <div id="decode" class="content active">
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">История</h3></div>
+      <div class="history-container">
+        <div id="historyItems" class="history-items"></div>
+        <button onclick="clearHistory()" class="button-danger">Очистить</button>
+      </div>
+    </div>
+    
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">Строка чертежа</h3></div>
+      <textarea id="blueprintInput" placeholder="Вставьте строку чертежа...">0eJyrVkrKKU0tKMrMK4lPys/PVrKqRogUK1lFx+ooZZak5ipZIYR1wQp1lHISk1JzgBIXFl3YerHxYtOFfRc2XdhwsV/hwq4Ley/suLD5wgagqpTU4uSizIKSzPw8kNp5F/Zf2HGx8cIGsJKtQAWJySWZZanxmXkpqRVKVgY6SmWpRcVg1aZmRpYmlpZAytjS2My4thYAsPtKcw==</textarea>
+      <div class="button-group">
+        <button onclick="decodeBlueprint()" class="button-primary">Decode</button>
+        <button onclick="clearBlueprint()" class="button-danger">Удалить</button>
+      </div>
+    </div>
+    
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">JSON редактор</h3></div>
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Поиск в JSON...">
+        <button onclick="searchInJson()">Найти</button>
+        <button onclick="findNext()">Следующий</button>
+        <button onclick="findPrev()">Предыдущий</button>
+        <button onclick="toggleReplaceUI()">Заменить</button>
+      </div>
+      <div id="replaceContainer" class="replace-container">
+          <div class="replace-fields">
+              <input type="text" id="replaceInput" placeholder="Текст для замены...">
+              <input type="text" id="replaceWithInput" placeholder="Заменить на...">
+          </div>
+          <button onclick="replaceAll()" class="button-primary">Заменить все</button>
+      </div>
+      <div id="jsonEditorContainer" class="json-editor-container"></div>
+      <button onclick="encodeJson()" class="button-primary">Encode</button>
+    </div>
+    
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">Encoded Blueprint</h3></div>
+      <textarea id="encodedOutput" readonly></textarea>
+      <div class="button-group">
+        <button onclick="copyToClipboard('encodedOutput', event)">Скопировать</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="book" class="content">
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">Код книги чертежей</h3></div>
+      <textarea id="bookInput" placeholder="Вставьте строку книги чертежей...">0eNpFjUsKwjAQhq8Ssq5WrArNVvAE7kRKq4MG+6KJIhTBx9KFZ9ATFLUqgnqFyY0c3ZRZ/Mw33/DnPAjnkGYy1l6QJDMu8oooLgZDi0sNERcVrv1Fi4d+ACEd8ISl2ZgtvvGMhTkwfOILH3jBgqwxqFEmUy2T+OceybrjFQtS3gw/Zo0PCqJXmpLWG72XrA8hTDI/Yngxa7Mj42P2grGp1qkStq3rEdi9bj9RWsZU44+0XIAn4zEsuWhYfAGZ+ne2O0235boUjut0nNXqC7lob2Q=</textarea>
+      <div class="button-group">
+        <button onclick="decodeBook()" class="button-primary">Decode Book</button>
+        <button onclick="clearBookInput()" class="button-danger">Удалить</button>
+      </div>
+    </div>
+
+    <div class="blueprint-panel">
+        <div class="panel-header"><h3 class="panel-title">Метаданные книги</h3></div>
+        
+        <h3>Название книги</h3>
+        <input type="text" id="bookLabel" maxlength="199">
+        <div class="charCounter" id="labelCounter">0/199</div>
+
+        <h3>Описание книги</h3>
+        <input type="text" id="bookDescription" maxlength="499">
+        <div class="charCounter" id="descCounter">0/499</div>
+
+        <h3>Иконки для книги (1-4)</h3>
+        <div id="iconSelectors"></div>
+    </div>
+
+    <div class="blueprint-panel">
+      <div class="panel-header"><h3 class="panel-title">JSON книги</h3></div>
+      <textarea id="bookDecoded"></textarea>
+      <div class="button-group">
+        <button onclick="reencodeBookJson()" class="button-primary">Encode</button>
+      </div>
+      <h3>Encoded Book</h3>
+      <textarea id="bookEncoded" readonly></textarea>
+      <div class="button-group">
+        <button onclick="copyToClipboard('bookEncoded', event)">Скопировать</button>
+      </div>
+    </div>
+  </div>
+
+	    <div class="footer">
+      <div class="footer-links">
+	    <p>🐞 <a href="https://www.youtube.com/@FCT-Ostin" target="_blank">YouTube</a></p>
+		<p>💙 <a href="https://t.me/FCTostin" target="_blank">Telegram</a></p>
+        <p>🎮 <a href="https://steamcommunity.com/groups/FCTgroup" target="_blank">Steam Group</a></p>
+        <p>🕹 <a href="https://www.patreon.com/c/OstinFCT" target="_blank">Patreon</a></p>
+        <p>🪐 <a href="https://boosty.to/ostinfct" target="_blank">Boosty</a></p>
+      </div>
+      <div class="footer-links">
+        <p>Руководство Steam: <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3476404033" target="_blank">Справочник по "Красоте" V.2</a></p>
+        <p>Создано при поддержке Телеграм сообщества FCTostin</p>
+      </div>
+    </div>
+	
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/match-highlighter.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
