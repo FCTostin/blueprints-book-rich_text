@@ -184,6 +184,7 @@ function populateIconSelectors() {
     </div>`;
   }
   document.getElementById('iconSelectors').innerHTML = html;
+  resetIconsToDefault();
 }
 
 function toggleOptions(selectDiv) {
@@ -193,7 +194,7 @@ function toggleOptions(selectDiv) {
 
 function selectIcon(index, name, img) {
   document.getElementById('selectedImg' + index).src = img;
-  document.getElementById('selectedName' + index).innerText = name || 'Не выбрано';
+  document.getElementById('selectedName' + index).innerText = name || 'Пусто';
   document.getElementById('preview' + index).src = img;
   updateBookJsonWithMetadata();
   document.querySelectorAll('.optionsList').forEach(list => list.style.display = 'none');
@@ -212,10 +213,34 @@ function decodeBook() {
   }
 }
 
+function resetIconsToDefault() {
+    const defaultIcon = iconsList[0];
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById('selectedImg' + i).src = defaultIcon.img;
+        document.getElementById('selectedName' + i).innerText = 'Пусто';
+        document.getElementById('preview' + i).src = defaultIcon.img;
+    }
+}
+
 function updateBookMetaFields(json) {
   const book = json.blueprint_book;
   document.getElementById('bookLabel').value = book.label || '';
   document.getElementById('bookDescription').value = book.description || '';
+  
+  resetIconsToDefault();
+  if (book.icons && Array.isArray(book.icons)) {
+    book.icons.forEach(iconData => {
+      const index = iconData.index;
+      const name = iconData.signal.name;
+      const iconInfo = iconsList.find(i => i.name === name);
+      if (iconInfo) {
+        document.getElementById('selectedImg' + index).src = iconInfo.img;
+        document.getElementById('selectedName' + index).innerText = iconInfo.name || 'Пусто';
+        document.getElementById('preview' + index).src = iconInfo.img;
+      }
+    });
+  }
+  
   updateCounters();
 }
 
@@ -230,10 +255,10 @@ function updateBookJsonWithMetadata() {
     book.icons = [];
     for (let i = 1; i <= 4; i++) {
       let name = document.getElementById('selectedName' + i).innerText;
-      if (name && name !== 'Не выбрано') {
+      if (name && name !== 'Не выбрано' && name !== 'Пусто') {
         let needsEntityType = iconsList.find(icon => icon.name === name)?.needsEntityType;
         let iconObj = { signal: { name: name }, index: i };
-        if (needsEntityType) { iconObj.signal.type = "entity"; }
+        iconObj.signal.type = needsEntityType ? "entity" : "item";
         book.icons.push(iconObj);
       }
     }
@@ -267,10 +292,10 @@ function clearBookInput() {
   document.getElementById('bookEncoded').value = '';
   document.getElementById('bookLabel').value = '';
   document.getElementById('bookDescription').value = '';
+  resetIconsToDefault();
   updateCounters();
 }
 
-// --- Page Initialization ---
 window.onload = function() {
   jsonEditor = CodeMirror(document.getElementById('jsonEditorContainer'), {
       mode: { name: "javascript", json: true },
